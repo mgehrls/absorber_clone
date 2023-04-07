@@ -1,5 +1,12 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:absorber_clone/utils/looping_bar.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'models/fighter.dart';
+import 'models/player.dart';
+import 'models/enemies.dart';
+import 'utils/progress_bar.dart';
 
 void main() => runApp(const MyApp());
 
@@ -25,31 +32,40 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   int timePlayed = 0;
   bool inBattle = false;
+  bool activeFight = false;
   late Player player;
   late Enemy enemy;
-  late Timer playerTimer;
-  late Timer enemyTimer;
+  late LoopingProgressBar playerTimer;
+  late LoopingProgressBar enemyTimer;
 
   void startTimer() {
     Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!inBattle) {
+        if (!activeFight) {
+        } else {
+          regen();
+        }
+      }
       setState(() {
         timePlayed++;
       });
     });
   }
 
+  void regen() {
+    if (!inBattle) {
+      if (player.hp < player.maxHp) {
+        player.hp =
+            double.parse((player.hp + 1).toStringAsFixed(2)) > player.maxHp
+                ? player.maxHp
+                : double.parse((player.hp + 1).toStringAsFixed(2));
+      }
+    }
+  }
+
   void startBattle() {
     inBattle = true;
-    playerTimer = Timer.periodic(Duration(milliseconds: player.speed), (timer) {
-      setState(() {
-        firstAttacksSecond(player, enemy);
-      });
-    });
-    enemyTimer = Timer.periodic(Duration(milliseconds: enemy.speed), (timer) {
-      setState(() {
-        firstAttacksSecond(enemy, player);
-      });
-    });
+    activeFight = true;
   }
 
   void firstAttacksSecond(Fighter first, Fighter second) {
@@ -59,7 +75,7 @@ class _GameScreenState extends State<GameScreen> {
       if (second is Enemy) {
         second.killed += 1;
         if (second.killed < second.population) {
-          delayedFunction(enemyRespawn);
+          endEncounter();
         } else if (second.killed == second.population) {
           endBattle();
         }
@@ -69,57 +85,70 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  void endEncounter() async {
+    activeFight = false;
+    delayedFunction(enemyRespawn);
+    delayedFunction(startBattle);
+  }
+
   void enemyRespawn() {
-    enemy
-      ..speed = 1000
-      ..attack = 0.3
-      ..hp = 2.0;
+    enemy.hp = enemy.maxHp;
   }
 
   void endBattle() {
     inBattle = false;
-    playerTimer.cancel();
-    enemyTimer.cancel();
   }
 
   Future<void> delayedFunction(Function x) async {
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 1000));
     x();
   }
 
   @override
   void initState() {
     super.initState();
-    player = Player(2500, 1, 10);
-    enemy = Enemy(1000, .3, 2, "Bat", 2, 0);
+    enemy = Bat(2, 0);
+    player = Player(2500, 1, 10, 10);
     startTimer();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Idle RPG'),
-      ),
+      appBar: AppBar(title: Text(timePlayed.toString())),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Time Played: $timePlayed'),
-            const SizedBox(height: 20),
+            HpProgressBar(maxHp: player.maxHp, hp: player.hp),
+            inBattle
+                ? LoopingProgressBar(
+                    duration: player.speed,
+                    onProgressComplete: () => firstAttacksSecond(player, enemy),
+                    isPlaying: activeFight,
+                  )
+                : const Text("Resting..."),
             Text('Player Health: ${player.hp}'),
             Text('${enemy.name} Health: ${enemy.hp}'),
             const SizedBox(height: 20),
             inBattle
                 ? ElevatedButton(
                     onPressed: endBattle,
-                    child: const Text('End Battle'),
+                    child: const Text('Flee!'),
                   )
                 : ElevatedButton(
-                    onPressed: startBattle,
+                    onPressed:
+                        enemy.killed == enemy.population ? null : startBattle,
                     child: const Text('Start Battle'),
                   ),
             const SizedBox(height: 20),
+            inBattle
+                ? LoopingProgressBar(
+                    duration: enemy.speed,
+                    onProgressComplete: () => firstAttacksSecond(enemy, player),
+                    isPlaying: activeFight,
+                  )
+                : const Text("Awaiting your challenge"),
             Text('${enemy.name}s Killed: ${enemy.killed}'),
             Text('${enemy.name} Population: ${enemy.population}'),
           ],
@@ -127,29 +156,4 @@ class _GameScreenState extends State<GameScreen> {
       ),
     );
   }
-}
-
-class Fighter {
-  int speed;
-  double attack;
-  double hp;
-
-  Fighter(this.speed, this.attack, this.hp);
-}
-
-class Player extends Fighter {
-  Player(int speed, double attack, double hp) : super(speed, attack, hp);
-}
-
-class Enemy extends Fighter {
-  late String name;
-  late int population;
-  late int killed;
-
-  Enemy(int speed, double attack, double hp, String name, int population,
-      int killed)
-      : population = population,
-        killed = killed,
-        name = name,
-        super(speed, attack, hp);
 }
