@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 class LoopingProgressBar extends StatefulWidget {
   final int duration;
   final Function onProgressComplete;
   final bool isPlaying;
 
-  LoopingProgressBar({
+  const LoopingProgressBar({
     required this.duration,
     required this.onProgressComplete,
     this.isPlaying = true,
@@ -61,7 +60,7 @@ class _LoopingProgressBarState extends State<LoopingProgressBar>
     return LinearProgressIndicator(
       value: _animation.value,
       backgroundColor: Colors.grey,
-      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+      valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
     );
   }
 
