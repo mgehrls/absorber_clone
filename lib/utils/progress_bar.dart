@@ -2,11 +2,12 @@
 
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 
 class HpProgressBar extends StatefulWidget {
-  final double maxHp;
-  final double hp;
+  final Decimal maxHp;
+  final Decimal hp;
 
   const HpProgressBar({super.key, required this.maxHp, required this.hp});
 
@@ -31,77 +32,20 @@ class _HpProgressBarState extends State<HpProgressBar> {
 
   void _calculatePercentage() {
     setState(() {
-      _percentage = widget.hp / widget.maxHp;
+      _percentage = widget.hp.toDouble() / widget.maxHp.toDouble();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return LinearProgressIndicator(
-      value: _percentage,
-      backgroundColor: Colors.grey[300],
-      valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
-    );
-  }
-}
-
-class TurnIndicator extends StatefulWidget {
-  final int turnLength;
-
-  const TurnIndicator({Key? key, required this.turnLength}) : super(key: key);
-
-  @override
-  _TurnIndicatorState createState() => _TurnIndicatorState();
-
-  void startTimer() {
-    _TurnIndicatorState state = _TurnIndicatorState();
-    state._startTimer();
-  }
-
-  void stopTimer() {
-    _TurnIndicatorState state = _TurnIndicatorState();
-    state._stopTimer();
-  }
-}
-
-class _TurnIndicatorState extends State<TurnIndicator> {
-  double _progress = 0;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
-
-  @override
-  void dispose() {
-    _stopTimer();
-    super.dispose();
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(Duration(milliseconds: widget.turnLength), (timer) {
-      setState(() {
-        _progress = 1;
-      });
-    });
-  }
-
-  void _stopTimer() {
-    _timer?.cancel();
-    setState(() {
-      _progress = 0;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LinearProgressIndicator(
-      value: _progress,
-      backgroundColor: Colors.grey[300],
-      minHeight: 10,
-      valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+    return SizedBox(
+      width: 200,
+      child: LinearProgressIndicator(
+        value: _percentage,
+        minHeight: 20,
+        backgroundColor: Colors.grey[300],
+        valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+      ),
     );
   }
 }

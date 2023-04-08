@@ -1,8 +1,10 @@
+import 'package:decimal/decimal.dart';
+
 class Fighter {
   int speed;
-  double attack;
-  double hp;
-  double maxHp;
+  Decimal attack;
+  Decimal hp;
+  Decimal maxHp;
 
   Fighter(this.speed, this.attack, this.maxHp, this.hp);
 }

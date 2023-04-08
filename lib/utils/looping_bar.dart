@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-class LoopingProgressBar extends StatefulWidget {
+class TurnIndicator extends StatefulWidget {
   final int duration;
   final Function onProgressComplete;
   final bool isPlaying;
 
-  const LoopingProgressBar({
+  const TurnIndicator({
     required this.duration,
     required this.onProgressComplete,
     this.isPlaying = true,
   });
 
   @override
-  _LoopingProgressBarState createState() => _LoopingProgressBarState();
+  _TurnIndicatorState createState() => _TurnIndicatorState();
 }
 
-class _LoopingProgressBarState extends State<LoopingProgressBar>
+class _TurnIndicatorState extends State<TurnIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -57,15 +57,18 @@ class _LoopingProgressBarState extends State<LoopingProgressBar>
 
   @override
   Widget build(BuildContext context) {
-    return LinearProgressIndicator(
-      value: _animation.value,
-      backgroundColor: Colors.grey,
-      valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+    return SizedBox(
+      width: 200,
+      child: LinearProgressIndicator(
+        value: _animation.value,
+        backgroundColor: Colors.grey,
+        valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+      ),
     );
   }
 
   @override
-  void didUpdateWidget(LoopingProgressBar oldWidget) {
+  void didUpdateWidget(TurnIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isPlaying != oldWidget.isPlaying) {
       if (widget.isPlaying) {

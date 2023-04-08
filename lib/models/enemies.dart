@@ -1,5 +1,7 @@
 // ignore_for_file: overridden_fields, unused_field
 
+import 'package:decimal/decimal.dart';
+
 import 'fighter.dart';
 
 abstract class Enemy extends Fighter {
@@ -7,7 +9,7 @@ abstract class Enemy extends Fighter {
   late final int _population; // make population private
   late int killed;
 
-  Enemy(int speed, double attack, double maxHp, double hp, this.name,
+  Enemy(int speed, Decimal attack, Decimal maxHp, Decimal hp, this.name,
       int population, this.killed)
       : _population = population,
         super(speed, attack, maxHp, hp);
@@ -20,17 +22,18 @@ class Bat extends Enemy {
   @override
   final int _population;
   final int _speed;
-  final double _maxHp;
-  final double _attack;
+  final Decimal _maxHp;
+  final Decimal _attack;
   final String _name;
 
-  Bat(double hp, int killed)
+  Bat(Decimal hp, int killed)
       : _population = 200,
         _speed = 1000,
-        _maxHp = 2.0,
-        _attack = 0.3,
+        _maxHp = 2.toDecimal(),
+        _attack = Decimal.parse("0.3"),
         _name = "Bat",
-        super(1000, .3, 2.0, 2, "Bat", 200, killed);
+        super(1000, Decimal.parse(".3"), 2.toDecimal(), 2.toDecimal(), "Bat",
+            200, killed);
 
   // implement the population getter in the subclass
   @override
