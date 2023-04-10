@@ -1,23 +1,38 @@
+import 'package:absorber_clone/models/attack.dart';
+import 'package:absorber_clone/models/speed.dart';
+import 'package:absorber_clone/models/hp.dart';
 import 'package:decimal/decimal.dart';
 
 import 'fighter.dart';
 
 class Player extends Fighter {
-  Player(int speed, Decimal attack, Decimal maxHp, Decimal hp)
-      : super(speed, attack, maxHp, hp);
+  final Speed _speed;
+  final Attack _attack;
+  final HP _hp;
+  String name = "Matt";
 
-  void absorbStat(String stat, dynamic number) {
+  Player(
+    Speed speed,
+    Attack attack,
+    HP hp,
+  )   : _speed = speed,
+        _attack = attack,
+        _hp = hp,
+        super(speed, attack, hp);
+
+  void changeStat(String stat, dynamic amount) {
     switch (stat) {
       case 'speed':
-        speed += number as int;
+        _speed.decreaseSpeed(amount as int);
         break;
       case 'attack':
-        attack += Decimal.parse(number.toString());
+        _attack.increaseAttack(amount as Decimal);
         break;
-      case 'maxHp':
-        maxHp += Decimal.parse(number.toString());
+      case 'hp':
+        _hp.increaseMaxHP(amount as Decimal);
         break;
       default:
+        print('Invalid stat!');
     }
   }
 }

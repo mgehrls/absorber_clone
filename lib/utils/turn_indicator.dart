@@ -6,10 +6,11 @@ class TurnIndicator extends StatefulWidget {
   final bool isPlaying;
 
   const TurnIndicator({
+    Key? key,
     required this.duration,
     required this.onProgressComplete,
     this.isPlaying = true,
-  });
+  }) : super(key: key);
 
   @override
   _TurnIndicatorState createState() => _TurnIndicatorState();
@@ -58,6 +59,7 @@ class _TurnIndicatorState extends State<TurnIndicator>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      key: ValueKey(widget.duration),
       width: 200,
       child: LinearProgressIndicator(
         value: _animation.value,
@@ -76,6 +78,9 @@ class _TurnIndicatorState extends State<TurnIndicator>
       } else {
         _animationController.reset();
       }
+    }
+    if (widget.duration != oldWidget.duration) {
+      _animationController.duration = Duration(milliseconds: widget.duration);
     }
   }
 }

@@ -1,10 +1,12 @@
+import 'package:absorber_clone/models/attack.dart';
+import 'package:absorber_clone/models/hp.dart';
+import 'package:absorber_clone/models/speed.dart';
 import 'package:decimal/decimal.dart';
 
 class Fighter {
-  int speed;
-  Decimal attack;
-  Decimal hp;
-  Decimal maxHp;
+  Speed speed;
+  Attack attack;
+  HP hp;
 
-  Fighter(this.speed, this.attack, this.maxHp, this.hp);
+  Fighter(this.speed, this.attack, this.hp);
 }

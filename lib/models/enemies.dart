@@ -1,39 +1,61 @@
 // ignore_for_file: overridden_fields, unused_field
 
+import 'package:absorber_clone/models/attack.dart';
+import 'package:absorber_clone/models/hp.dart';
+import 'package:absorber_clone/models/speed.dart';
 import 'package:decimal/decimal.dart';
 
 import 'fighter.dart';
 
 abstract class Enemy extends Fighter {
+  final Speed _speed;
+  final Attack _attack;
+  final HP _hp;
+  int killed;
+  late int population;
   late String name;
-  late final int _population; // make population private
-  late int killed;
 
-  Enemy(int speed, Decimal attack, Decimal maxHp, Decimal hp, this.name,
-      int population, this.killed)
-      : _population = population,
-        super(speed, attack, maxHp, hp);
+  Enemy(Speed speed, Attack attack, HP hp, this.killed, int population,
+      String name)
+      : _speed = speed,
+        _attack = attack,
+        _hp = hp,
+        super(speed, attack, hp) {
+    this.name = name;
+  }
 
-  int get population => _population; // add a getter method for population
+  int getPopulation() => population;
+
+  String getName() => name;
 }
+
+String name = "Matt";
 
 class Bat extends Enemy {
   // define population in the subclass
+  final int _population = 200;
   @override
-  final int _population;
-  final int _speed;
+  final Speed _speed;
   final Decimal _maxHp;
-  final Decimal _attack;
+  final Attack _attack;
   final String _name;
+  late final int _killed;
+  String name = "Bat";
 
-  Bat(Decimal hp, int killed)
-      : _population = 200,
-        _speed = 1000,
+  Bat(Decimal hp, int newKilled)
+      : _speed = Speed(1000),
         _maxHp = 2.toDecimal(),
-        _attack = Decimal.parse("0.3"),
+        _attack = Attack(Decimal.parse(".3")),
         _name = "Bat",
-        super(1000, Decimal.parse(".3"), 2.toDecimal(), 2.toDecimal(), "Bat",
-            200, killed);
+        _killed = newKilled,
+        super(
+          Speed(1000),
+          Attack(Decimal.parse(".3")),
+          HP(2.toDecimal(), 2.toDecimal()),
+          newKilled,
+          200,
+          "Bat",
+        );
 
   // implement the population getter in the subclass
   @override
