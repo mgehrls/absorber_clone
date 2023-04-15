@@ -9,7 +9,7 @@ class TurnIndicator extends StatefulWidget {
     Key? key,
     required this.duration,
     required this.onProgressComplete,
-    this.isPlaying = true,
+    required this.isPlaying,
   }) : super(key: key);
 
   @override
@@ -38,14 +38,14 @@ class _TurnIndicatorState extends State<TurnIndicator>
         if (_animationController.isCompleted) {
           widget.onProgressComplete();
           _animationController.reset();
-          if (widget.isPlaying) {
+          if (widget.isPlaying == true) {
             _animationController.forward();
           }
         }
         setState(() {});
       });
 
-    if (widget.isPlaying) {
+    if (widget.isPlaying == true) {
       _animationController.forward();
     }
   }
@@ -73,7 +73,7 @@ class _TurnIndicatorState extends State<TurnIndicator>
   void didUpdateWidget(TurnIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isPlaying != oldWidget.isPlaying) {
-      if (widget.isPlaying) {
+      if (widget.isPlaying == true) {
         _animationController.forward();
       } else {
         _animationController.reset();
