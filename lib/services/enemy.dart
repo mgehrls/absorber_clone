@@ -1,8 +1,8 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
-import '../fighter.dart';
-import '/stats.dart';
+import 'fighter.dart';
+import 'stats.dart';
 
 @immutable
 class Enemy extends Fighter {

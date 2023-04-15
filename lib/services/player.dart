@@ -1,8 +1,8 @@
 import 'package:decimal/decimal.dart';
-import 'package:flutter_tests/fighter.dart';
+import 'fighter.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../stats.dart';
+import 'stats.dart';
 
 class PlayerNotifier extends StateNotifier<Fighter> {
   PlayerNotifier()

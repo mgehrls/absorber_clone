@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:flutter_tests/battle.dart';
-import 'package:flutter_tests/services/globals.dart';
+import 'components/battle.dart';
+import 'services/globals.dart';
 import 'components/timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,7 +56,9 @@ class _HomePageState extends ConsumerState<HomePage> {
             ElevatedButton(
                 onPressed: () =>
                     ref.read(inBattleProvider.notifier).state = !inBattle,
-                child: const Text("Toggle Battle")),
+                child: inBattle
+                    ? const Text("Stop Battle")
+                    : const Text("Start Battle")),
             const SizedBox(width: 10),
             BattleComponent(),
           ],

@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'package:flutter_tests/services/globals.dart';
-import 'services/player.dart';
-import 'components/timer.dart';
-import 'services/enemy.dart';
+import '../services/globals.dart';
+import '../services/player.dart';
+import '../services/enemy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'turn_indicator.dart';
