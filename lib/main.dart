@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:absorber_clone/services/player.dart';
+import 'package:decimal/decimal.dart';
+
 import 'components/battle.dart';
 import 'services/globals.dart';
 import 'components/timer.dart';
@@ -35,6 +38,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
     Timer.periodic(const Duration(seconds: 1), (timer) {
       ref.read(timeNotifierProvider.notifier).incrementTime();
+      if (!ref.read(inBattleProvider)) {
+        ref.read(playerNotifierProvider.notifier).regenHp(Decimal.one);
+      }
     });
   }
 

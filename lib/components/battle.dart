@@ -25,6 +25,9 @@ class BattleComponent extends ConsumerWidget {
                   .takeDamage(player.attack.attack),
               if (enemy.hp.isDead())
                 {
+                  ref
+                      .read(playerNotifierProvider.notifier)
+                      .absorbStats(enemy.statsToGrant),
                   ref.read(enemyNotifierProvider.notifier).killed(),
                   if (enemy.killed.killed == enemy.population)
                     {
@@ -50,6 +53,7 @@ class BattleComponent extends ConsumerWidget {
                   .takeDamage(enemy.attack.attack),
               if (player.hp.isDead())
                 {
+                  ref.read(enemyNotifierProvider.notifier).respawn(),
                   ref.read(inBattleProvider.notifier).state = false,
                 }
             },
