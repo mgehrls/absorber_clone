@@ -19,10 +19,7 @@ class HP {
 
   HP increaseMaxHP(Decimal amount) {
     _maxHP += amount;
-    return HP(
-        _currentHP +=
-            amount > _maxHP ? _currentHP = _maxHP : _currentHP += amount,
-        _maxHP);
+    return HP(_currentHP += amount, _maxHP);
   }
 
   HP decreaseMaxHP(Decimal amount) {
@@ -66,12 +63,12 @@ class Attack {
 
   Decimal get attack => _attack;
 
-  void increaseAttack(Decimal amount) {
-    _attack += amount;
+  Attack increaseAttack(Decimal amount) {
+    return Attack(_attack += amount);
   }
 
-  void decreaseAttack(Decimal amount) {
-    _attack -= amount;
+  Attack decreaseAttack(Decimal amount) {
+    return Attack(_attack -= amount);
   }
 }
 
@@ -88,17 +85,17 @@ class Speed {
   int get xSpeed => _xSpeed;
   int get totalSpeed => _speed + _xSpeed;
 
-  void increaseSpeed(int amount) {
-    _speed += amount;
+  Speed increaseSpeed(int amount) {
+    return Speed(_speed += amount);
   }
 
-  void decreaseSpeed(int amount) {
+  Speed decreaseSpeed(int amount) {
     if (_speed < 110) {
       int newX = 110 - _speed;
       increaseXSpeed(newX);
-      _speed = 110;
+      return Speed(110);
     } else {
-      _speed -= amount;
+      return Speed(_speed -= amount);
     }
   }
 
@@ -125,5 +122,23 @@ class Killed {
 
   Killed incrementKilled() {
     return Killed(_killed + 1);
+  }
+}
+
+class StatToGrant {
+  late String statName;
+  late dynamic statValue;
+
+  StatToGrant(this.statName, this.statValue);
+}
+
+class StatsToGrant {
+  List<StatToGrant> statsToGrant = [];
+
+  StatsToGrant();
+
+  StatsToGrant addStatToGrant(List<StatToGrant> statsToGrant) {
+    this.statsToGrant.addAll(statsToGrant);
+    return this;
   }
 }

@@ -6,11 +6,40 @@ import 'stats.dart';
 
 @immutable
 class Enemy extends Fighter {
+  final String name;
   final Killed killed;
   final int population;
+  final StatsToGrant statsToGrant;
 
-  const Enemy(speed, attack, hp, this.killed, this.population)
-      : super(speed, attack, hp);
+  const Enemy(
+    speed,
+    attack,
+    hp,
+    this.name,
+    this.killed,
+    this.population,
+    this.statsToGrant,
+  ) : super(speed, attack, hp);
+
+  Enemy newEnemy({
+    required Speed speed,
+    required Attack attack,
+    required HP hp,
+    required String name,
+    required Killed killed,
+    required int population,
+    required StatsToGrant statsToGrant,
+  }) {
+    return Enemy(
+      speed,
+      attack,
+      hp,
+      name,
+      killed,
+      population,
+      statsToGrant,
+    );
+  }
 
   @override
   Enemy copyWith({
@@ -24,8 +53,10 @@ class Enemy extends Fighter {
       speed ?? this.speed,
       attack ?? this.attack,
       hp ?? this.hp,
+      name,
       killed ?? this.killed,
       population ?? this.population,
+      statsToGrant,
     );
   }
 }
@@ -68,8 +99,14 @@ final enemyNotifierProvider =
             Speed(1000),
             Attack(Decimal.parse(".3")),
             HP(2.toDecimal(), 2.toDecimal()),
+            "Bat",
             Killed(0),
-            3,
+            200,
+            StatsToGrant().addStatToGrant([
+              StatToGrant("attack", Decimal.parse(".01")),
+              StatToGrant("speed", 1),
+              StatToGrant("hp", Decimal.parse(".01"))
+            ]),
           ),
           0,
           3,
