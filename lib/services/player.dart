@@ -16,6 +16,14 @@ class PlayerNotifier extends StateNotifier<Fighter> {
     state = state.copyWith(hp: state.hp.takeDamage(damage));
   }
 
+  bool isFullHealth() {
+    if (state.hp.currentHP == state.hp.maxHP) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   void heal(Decimal amount) {
     state = state.copyWith(hp: state.hp.heal(amount));
   }
@@ -40,8 +48,8 @@ class PlayerNotifier extends StateNotifier<Fighter> {
     state = state.copyWith(hp: state.hp.heal(amount));
   }
 
-  void absorbStats(StatsToGrant statsToGrant) {
-    for (StatToGrant stat in statsToGrant.statsToGrant) {
+  void absorbStats(List<StatToGrant> statsToGrant) {
+    for (StatToGrant stat in statsToGrant) {
       switch (stat.statName) {
         case "attack":
           state = state.copyWith(
@@ -49,7 +57,7 @@ class PlayerNotifier extends StateNotifier<Fighter> {
           break;
         case "speed":
           state =
-              state.copyWith(speed: state.speed.increaseSpeed(stat.statValue));
+              state.copyWith(speed: state.speed.decreaseSpeed(stat.statValue));
           break;
         case "hp":
           state = state.copyWith(hp: state.hp.increaseMaxHP(stat.statValue));

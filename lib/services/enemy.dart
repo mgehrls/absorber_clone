@@ -1,3 +1,4 @@
+import 'package:absorber_clone/services/enemies.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
@@ -9,7 +10,7 @@ class Enemy extends Fighter {
   final String name;
   final Killed killed;
   final int population;
-  final StatsToGrant statsToGrant;
+  final List<StatToGrant> statsToGrant;
 
   const Enemy(
     speed,
@@ -28,7 +29,7 @@ class Enemy extends Fighter {
     required String name,
     required Killed killed,
     required int population,
-    required StatsToGrant statsToGrant,
+    required List<StatToGrant> statsToGrant,
   }) {
     return Enemy(
       speed,
@@ -47,7 +48,6 @@ class Enemy extends Fighter {
     Attack? attack,
     HP? hp,
     Killed? killed,
-    int? population,
   }) {
     return Enemy(
       speed ?? this.speed,
@@ -55,17 +55,21 @@ class Enemy extends Fighter {
       hp ?? this.hp,
       name,
       killed ?? this.killed,
-      population ?? this.population,
+      population,
       statsToGrant,
     );
   }
 }
 
 class EnemyNotifier extends StateNotifier<Enemy> {
-  EnemyNotifier(Enemy fighter, int population, int killed) : super(fighter);
+  EnemyNotifier(Enemy fighter) : super(fighter);
 
   void killed() {
     state = state.copyWith(killed: state.killed.incrementKilled());
+  }
+
+  void newEnemy(Enemy enemy) {
+    state = enemy;
   }
 
   void respawn() {
@@ -93,21 +97,5 @@ class EnemyNotifier extends StateNotifier<Enemy> {
   }
 }
 
-final enemyNotifierProvider =
-    StateNotifierProvider<EnemyNotifier, Enemy>((ref) => EnemyNotifier(
-          Enemy(
-            Speed(1000),
-            Attack(Decimal.parse(".3")),
-            HP(2.toDecimal(), 2.toDecimal()),
-            "Bat",
-            Killed(0),
-            200,
-            StatsToGrant().addStatToGrant([
-              StatToGrant("attack", Decimal.parse(".01")),
-              StatToGrant("speed", 1),
-              StatToGrant("hp", Decimal.parse(".01"))
-            ]),
-          ),
-          0,
-          3,
-        ));
+final enemyNotifierProvider = StateNotifierProvider<EnemyNotifier, Enemy>(
+    (ref) => EnemyNotifier(ref.read(enemyListProvider.notifier).getNewEnemy()));

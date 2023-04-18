@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
 
 final inBattleProvider = StateProvider<bool>((ref) => false);
+
+final autoBattleProvider = StateProvider<bool>((ref) => false);
 
 class TimeNotifier extends StateNotifier<int> {
   TimeNotifier() : super(0);

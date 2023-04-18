@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:absorber_clone/services/enemies.dart';
+import 'package:absorber_clone/services/enemy.dart';
 import 'package:absorber_clone/services/player.dart';
 import 'package:decimal/decimal.dart';
 
 import 'components/battle.dart';
+import 'components/stat_page.dart';
 import 'services/globals.dart';
 import 'components/timer.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +44,14 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (!ref.read(inBattleProvider)) {
         ref.read(playerNotifierProvider.notifier).regenHp(Decimal.one);
       }
+      if (ref.watch(autoBattleProvider) &&
+          !ref.watch(inBattleProvider) &&
+          ref.read(playerNotifierProvider).hp.isFull()) {
+        ref
+            .read(enemyNotifierProvider.notifier)
+            .newEnemy(ref.read(enemyListProvider.notifier).getNewEnemy());
+        ref.read(inBattleProvider.notifier).state = true;
+      }
     });
   }
 
@@ -48,6 +59,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final time = ref.watch(timeNotifierProvider);
     final inBattle = ref.watch(inBattleProvider);
+    final autoBattle = ref.watch(autoBattleProvider);
 
     // ignore: unused_local_variable
     late Timer respawn; // it is used in the onProgressComplete callback.
@@ -56,9 +68,19 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: AppBar(title: TimerComponent(timerInfo: time)),
       body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      ref.read(autoBattleProvider.notifier).state = !autoBattle;
+                    },
+                    child: autoBattle
+                        ? const Text("AutoBattle: On")
+                        : const Text("AutoBattle: Off"))
+              ],
+            ),
             ElevatedButton(
                 onPressed: () =>
                     ref.read(inBattleProvider.notifier).state = !inBattle,
@@ -66,7 +88,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ? const Text("Stop Battle")
                     : const Text("Start Battle")),
             const SizedBox(width: 10),
-            BattleComponent(),
+            const BattleComponent(),
+            const SizedBox(height: 40),
+            const StatPage(),
           ],
         ),
       ),

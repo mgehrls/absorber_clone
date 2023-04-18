@@ -1,92 +1,133 @@
 import 'dart:async';
+import 'package:decimal/decimal.dart';
+
 import '../services/globals.dart';
 import '../services/player.dart';
 import '../services/enemy.dart';
+import '../services/enemies.dart';
+import 'package:absorber_clone/services/fighter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'turn_indicator.dart';
 
+Decimal calculateDamageGiven(Decimal attack) {
+  Decimal damage = attack;
+  if (damage < Decimal.zero) {
+    damage = Decimal.zero;
+  }
+  return damage;
+}
+
 class BattleComponent extends ConsumerWidget {
+  const BattleComponent({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final player = ref.watch(playerNotifierProvider);
     final enemy = ref.watch(enemyNotifierProvider);
     final inBattle = ref.watch(inBattleProvider);
-    final time = ref.watch(timeNotifierProvider);
-
     // ignore: unused_local_variable
     late Timer respawn; // it is used in the onProgressComplete callback.
 
+    void playerAttacksEnemy(Fighter player, Enemy enemy) {
+      Decimal damage = calculateDamageGiven(player.attack.attack);
+      ref.read(enemyNotifierProvider.notifier).takeDamage(damage);
+
+      if (enemy.hp.isDead()) {
+        ref
+            .read(playerNotifierProvider.notifier)
+            .absorbStats(enemy.statsToGrant);
+        ref.read(enemyNotifierProvider.notifier).killed();
+        ref.read(enemyListProvider.notifier).killedEnemy(enemy);
+
+        respawn = Timer(const Duration(seconds: 1), () {
+          if (enemy.killed.killed == enemy.population) {
+            ref
+                .read(enemyNotifierProvider.notifier)
+                .newEnemy(ref.read(enemyListProvider.notifier).getNewEnemy());
+            ref.read(enemyNotifierProvider.notifier).respawn();
+          } else {
+            ref.read(enemyNotifierProvider.notifier).respawn();
+          }
+        });
+      }
+    }
+
+    void enemyAttacksPlayer(Fighter player, Enemy enemy) {
+      Decimal damage = calculateDamageGiven(enemy.attack.attack);
+      ref.read(playerNotifierProvider.notifier).takeDamage(damage);
+
+      if (player.hp.isDead()) {
+        ref
+            .read(enemyNotifierProvider.notifier)
+            .newEnemy(ref.read(enemyListProvider.notifier).getNewEnemy());
+        ref.read(enemyNotifierProvider.notifier).respawn();
+        ref.read(inBattleProvider.notifier).state = false;
+      }
+    }
+
+    Column playerBattleDisplay(
+        Fighter player, TurnIndicator playerTurnIndicator) {
+      return Column(
+        children: [
+          Text(
+              "${player.hp.currentHP.toString()} / ${player.hp.maxHP.toString()}"),
+          playerTurnIndicator,
+        ],
+      );
+    }
+
+    Column enemyBattleDisplay(TurnIndicator enemyTurnIndicator, Enemy enemy) {
+      return Column(
+        children: [
+          enemyTurnIndicator,
+          Column(
+            children: [
+              Text(enemy.name),
+              Text(
+                  "${enemy.hp.currentHP.toString()} / ${enemy.hp.maxHP.toString()}"),
+              Text(enemy.killed.killed.toString()),
+            ],
+          ),
+        ],
+      );
+    }
+
     TurnIndicator playerTurnIndicator = TurnIndicator(
         duration: player.speed.speed,
-        onProgressComplete: () => {
-              ref
-                  .read(enemyNotifierProvider.notifier)
-                  .takeDamage(player.attack.attack),
-              if (enemy.hp.isDead())
-                {
-                  ref
-                      .read(playerNotifierProvider.notifier)
-                      .absorbStats(enemy.statsToGrant),
-                  ref.read(enemyNotifierProvider.notifier).killed(),
-                  if (enemy.killed.killed == enemy.population)
-                    {
-                      ref.read(inBattleProvider.notifier).state = false,
-                    }
-                  else
-                    {
-                      respawn = Timer(const Duration(seconds: 1), () {
-                        ref.read(enemyNotifierProvider.notifier).respawn();
-                      })
-                    }
-                }
-            },
+        onProgressComplete: () => playerAttacksEnemy(player, enemy),
         isPlaying: inBattle &&
             !player.hp.isDead() &&
             !enemy.hp.isDead() &&
             enemy.killed.killed < enemy.population);
     TurnIndicator enemyTurnIndicator = TurnIndicator(
         duration: enemy.speed.speed,
-        onProgressComplete: () => {
-              ref
-                  .read(playerNotifierProvider.notifier)
-                  .takeDamage(enemy.attack.attack),
-              if (player.hp.isDead())
-                {
-                  ref.read(enemyNotifierProvider.notifier).respawn(),
-                  ref.read(inBattleProvider.notifier).state = false,
-                }
-            },
+        onProgressComplete: () => enemyAttacksPlayer(player, enemy),
         isPlaying: inBattle &&
             !enemy.hp.isDead() &&
             !player.hp.isDead() &&
             enemy.killed.killed < enemy.population);
 
-    return Column(
-      children: [
-        Column(
-          children: [
-            Text(
-                "${player.hp.currentHP.toString()} / ${player.hp.maxHP.toString()}"),
-            playerTurnIndicator,
-          ],
-        ),
-        const SizedBox(
-          height: 100,
-        ),
-        Column(
-          children: [
-            enemyTurnIndicator,
-            Column(
-              children: [
-                Text(
-                    "${enemy.hp.currentHP.toString()} / ${enemy.hp.maxHP.toString()}"),
-                Text(enemy.killed.killed.toString()),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
+    if (inBattle) {
+      return Column(
+        children: [
+          enemyBattleDisplay(enemyTurnIndicator, enemy),
+          const SizedBox(
+            height: 100,
+          ),
+          playerBattleDisplay(player, playerTurnIndicator),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          const SizedBox(
+            height: 100,
+          ),
+          const Text("Recovering..."),
+          playerBattleDisplay(player, playerTurnIndicator),
+        ],
+      );
+    }
   }
 }

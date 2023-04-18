@@ -51,6 +51,14 @@ class HP {
     return HP(_currentHP, _maxHP);
   }
 
+  bool isFull() {
+    if (_currentHP == _maxHP) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   bool isDead() {
     return _currentHP <= 0.toDecimal();
   }
@@ -130,15 +138,4 @@ class StatToGrant {
   late dynamic statValue;
 
   StatToGrant(this.statName, this.statValue);
-}
-
-class StatsToGrant {
-  List<StatToGrant> statsToGrant = [];
-
-  StatsToGrant();
-
-  StatsToGrant addStatToGrant(List<StatToGrant> statsToGrant) {
-    this.statsToGrant.addAll(statsToGrant);
-    return this;
-  }
 }
