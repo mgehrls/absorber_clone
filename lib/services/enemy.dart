@@ -1,6 +1,7 @@
 import 'package:absorber_clone/services/enemies.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:riverpod/riverpod.dart';
 import 'fighter.dart';
 import 'stats.dart';
@@ -13,50 +14,86 @@ class Enemy extends Fighter {
   final List<StatToGrant> statsToGrant;
 
   const Enemy(
-    speed,
-    attack,
-    hp,
     this.name,
+    hp,
+    speed,
+    magic,
+    regeneration,
+    attack,
+    effects,
+    chances,
+    resistances,
     this.killed,
     this.population,
     this.statsToGrant,
-  ) : super(speed, attack, hp);
+  ) : super(
+          hp,
+          speed,
+          magic,
+          regeneration,
+          attack,
+          effects,
+          chances,
+          resistances,
+        );
 
   Enemy newEnemy({
-    required Speed speed,
-    required Attack attack,
-    required HP hp,
     required String name,
+    required HP hp,
+    required Speed speed,
+    required Decimal magic,
+    required Decimal regeneration,
+    required Attack attack,
+    required List effects,
+    required List chances,
+    required List resistances,
     required Killed killed,
     required int population,
     required List<StatToGrant> statsToGrant,
   }) {
     return Enemy(
-      speed,
-      attack,
-      hp,
       name,
+      hp,
+      speed,
+      magic,
+      regeneration,
+      attack,
+      effects,
+      chances,
+      resistances,
       killed,
       population,
       statsToGrant,
     );
   }
 
-  @override
   Enemy copyWith({
-    Speed? speed,
-    Attack? attack,
+    String? name,
     HP? hp,
+    Speed? speed,
+    Decimal? magic,
+    Decimal? regeneration,
+    Attack? attack,
+    List? effects,
+    List? chances,
+    List? resistances,
     Killed? killed,
+    int? population,
+    List<StatToGrant>? statsToGrant,
   }) {
     return Enemy(
-      speed ?? this.speed,
-      attack ?? this.attack,
+      name ?? this.name,
       hp ?? this.hp,
-      name,
+      speed ?? this.speed,
+      magic ?? this.magic,
+      regeneration ?? this.regeneration,
+      attack ?? this.attack,
+      effects ?? this.effects,
+      chances ?? this.chances,
+      resistances ?? this.resistances,
       killed ?? this.killed,
-      population,
-      statsToGrant,
+      population ?? this.population,
+      statsToGrant ?? this.statsToGrant,
     );
   }
 }

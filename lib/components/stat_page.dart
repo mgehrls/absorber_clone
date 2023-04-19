@@ -27,7 +27,7 @@ class StatPage extends ConsumerWidget {
               Text("${player.speed.speed}"),
               Text("${player.attack.attack}"),
             ]),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Column(
               children: [
                 Text(enemy.name),
@@ -38,7 +38,7 @@ class StatPage extends ConsumerWidget {
                 Text("${enemy.killed.killed} / ${enemy.population}"),
               ],
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Column(
               children: [
                 Text("In Battle: ${inBattle.toString()}"),
@@ -47,14 +47,14 @@ class StatPage extends ConsumerWidget {
             ),
           ],
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             for (var i = 0; i < enemyList.length; i++)
               Column(
                 children: [
-                  Text("${enemyList[i].name}"),
+                  Text(enemyList[i].name),
                   Text(
                       "${enemyList[i].killed.killed} / ${enemyList[i].population}"),
                   Text(

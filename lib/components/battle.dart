@@ -29,28 +29,44 @@ class BattleComponent extends ConsumerWidget {
     // ignore: unused_local_variable
     late Timer respawn; // it is used in the onProgressComplete callback.
 
-    void playerAttacksEnemy(Fighter player, Enemy enemy) {
+    void playerAttacksEnemy(Fighter player, Enemy enemy) async {
+      //sort out damage to enemy and side effects, apply them to each side before the next section
       Decimal damage = calculateDamageGiven(player.attack.attack);
       ref.read(enemyNotifierProvider.notifier).takeDamage(damage);
 
-      if (enemy.hp.isDead()) {
+      //logic dealing with enemy death
+      if (enemy.hp.isDead() && !player.hp.isDead()) {
         ref
             .read(playerNotifierProvider.notifier)
             .absorbStats(enemy.statsToGrant);
         ref.read(enemyNotifierProvider.notifier).killed();
         ref.read(enemyListProvider.notifier).killedEnemy(enemy);
+        if (!ref.read(enemyListProvider.notifier).isEnemyAvailable()) {
+          ref.read(inBattleProvider.notifier).state = false;
+          print("you win!");
+        }
 
         respawn = Timer(const Duration(seconds: 1), () {
-          if (enemy.killed.killed == enemy.population) {
+          if (ref.watch(enemyNotifierProvider).killed.killed ==
+                  ref.watch(enemyNotifierProvider).population &&
+              !ref.watch(autoBattleProvider)) {
+            ref.read(inBattleProvider.notifier).state = false;
+          } else if (ref.watch(enemyNotifierProvider).killed.killed ==
+                  ref.watch(enemyNotifierProvider).population &&
+              ref.watch(autoBattleProvider)) {
             ref
                 .read(enemyNotifierProvider.notifier)
                 .newEnemy(ref.read(enemyListProvider.notifier).getNewEnemy());
             ref.read(enemyNotifierProvider.notifier).respawn();
-          } else {
+          } else if (ref.watch(enemyNotifierProvider).killed.killed <
+              ref.watch(enemyNotifierProvider).population) {
             ref.read(enemyNotifierProvider.notifier).respawn();
+          } else {
+            throw Exception(
+                "Something happened in death logic of playerAttacksEnemy");
           }
         });
-      }
+      } // end of enemy death logic
     }
 
     void enemyAttacksPlayer(Fighter player, Enemy enemy) {

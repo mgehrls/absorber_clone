@@ -1,26 +1,31 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'stats.dart';
 
 @immutable
 class Fighter {
-  final Speed speed;
-  final Attack attack;
   final HP hp;
+  final Speed speed;
+  final Decimal magic;
+  final Decimal regeneration; //health restored each turn
+  final Attack attack;
+  final List effects;
+  final List chances;
+  final List resistances;
 
-  const Fighter(this.speed, this.attack, this.hp);
-
-  Fighter copyWith({
-    Speed? speed,
-    Attack? attack,
-    HP? hp,
-  }) {
-    return Fighter(
-      speed ?? this.speed,
-      attack ?? this.attack,
-      hp ?? this.hp,
-    );
-  }
+  const Fighter(
+    this.hp,
+    this.speed,
+    this.magic,
+    this.regeneration,
+    this.attack,
+    this.effects,
+    this.chances,
+    this.resistances,
+  );
 }
+
+
 
 
 

@@ -13,10 +13,10 @@ class TurnIndicator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TurnIndicatorState createState() => _TurnIndicatorState();
+  TurnIndicatorState createState() => TurnIndicatorState();
 }
 
-class _TurnIndicatorState extends State<TurnIndicator>
+class TurnIndicatorState extends State<TurnIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;

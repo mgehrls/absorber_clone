@@ -19,7 +19,7 @@ class HP {
 
   HP increaseMaxHP(Decimal amount) {
     _maxHP += amount;
-    return HP(_currentHP += amount, _maxHP);
+    return HP(_currentHP, _maxHP);
   }
 
   HP decreaseMaxHP(Decimal amount) {
