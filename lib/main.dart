@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:absorber_clone/components/customAppBar.dart';
 import 'package:absorber_clone/services/enemies.dart';
 import 'package:absorber_clone/services/enemy.dart';
 import 'package:absorber_clone/services/player.dart';
@@ -65,7 +66,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     late Timer respawn; // it is used in the onProgressComplete callback.
 
     return Scaffold(
-      appBar: AppBar(title: TimerComponent(timerInfo: time)),
+      appBar: CustomAppBar(),
       body: Center(
         child: Column(
           children: [
